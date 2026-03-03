@@ -1,0 +1,128 @@
+.raids-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.raid-controls {
+  background: white;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.raid-controls h2 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.control-group label {
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.control-group input {
+  width: 100px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.status-info {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.status-info p {
+  margin: 0;
+}
+
+.loading {
+  color: #3498db;
+  font-weight: 500;
+}
+
+.error {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+.popup {
+  padding: 0.5rem;
+}
+
+.popup h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.popup p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.raid-level {
+  display: inline-block;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.time-remaining {
+  font-weight: 500;
+  color: #e74c3c;
+}
+
+/* Leaflet marker customization */
+.leaflet-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Search radius circle styling */
+.leaflet-interactive {
+  fill-opacity: 0.1;
+  stroke: #e74c3c;
+  stroke-width: 2;
+  stroke-opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .raid-controls {
+    padding: 1rem;
+  }
+
+  .raid-controls h2 {
+    font-size: 1.2rem;
+  }
+
+  .control-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .control-group input {
+    width: 100%;
+  }
+
+  .status-info {
+    gap: 1rem;
+  }
+}

@@ -17,11 +17,24 @@ const raidSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    timeLeft: {
-        type: String,
+    raidLevel: {
+        type: Number,
+        enum: [1, 2, 3, 4, 5],
         required: true,
     },
-});
+    startTime: {
+        type: Date,
+        required: true,
+    },
+    endTime: {
+        type: Date,
+        required: true,
+    },
+    participants: {
+        type: Number,
+        default: 0,
+    },
+}, { timestamps: true });
 
 const Raid = mongoose.model('Raid', raidSchema);
 module.exports = Raid;

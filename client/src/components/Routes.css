@@ -1,0 +1,237 @@
+.routes-page {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  gap: 0;
+}
+
+.routes-sidebar {
+  width: 350px;
+  background: white;
+  padding: 1.5rem;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.routes-sidebar h2 {
+  margin: 0 0 1.5rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.routes-sidebar h3 {
+  margin: 1rem 0 0.8rem 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.upload-section {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.upload-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.upload-group input[type="file"] {
+  padding: 0.8rem;
+  border: 2px dashed #3498db;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.upload-group input[type="file"]::-webkit-file-upload-button {
+  background: #3498db;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.route-name-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.route-name-input input {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.route-name-input button {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.route-name-input button:hover:not(:disabled) {
+  background: #229954;
+}
+
+.route-name-input button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.success {
+  color: #27ae60;
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.error-message {
+  background: #ffe0e0;
+  color: #e74c3c;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.saved-routes {
+  margin-top: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.no-routes {
+  color: #999;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.loading {
+  color: #3498db;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.routes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.route-item {
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  background: #f9f9f9;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.route-item:hover {
+  background: #f0f0f0;
+  border-color: #3498db;
+}
+
+.route-item.active {
+  background: #dfe6e9;
+  border-color: #3498db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.route-info strong {
+  color: #333;
+}
+
+.route-distance {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.route-difficulty {
+  display: inline-block;
+  font-size: 0.75rem;
+  background: #f39c12;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  width: fit-content;
+}
+
+.routes-map {
+  flex: 1;
+  background: #e0e0e0;
+}
+
+.empty-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: #f5f5f5;
+  color: #666;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.popup {
+  padding: 0.5rem;
+}
+
+.popup h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.popup p {
+  margin: 0.2rem 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Leaflet polyline styling */
+.leaflet-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.leaflet-interactive {
+  stroke: #3498db;
+  stroke-width: 3;
+}
+
+@media (max-width: 768px) {
+  .routes-page {
+    flex-direction: column;
+  }
+
+  .routes-sidebar {
+    width: 100%;
+    border-bottom: 2px solid #ddd;
+    max-height: 40%;
+    border-left: none;
+  }
+
+  .routes-map {
+    flex: 1;
+  }
+}
