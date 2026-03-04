@@ -163,6 +163,67 @@ This Gengar:
 
 ---
 
+## 🔎 Filtering Pokémon & Raids
+
+PokeFind includes powerful filtering options to help you find exactly what you're looking for!
+
+### Filter Panel
+
+Click the **Show Filters** button at the top of the Map or Raids view to reveal the filter panel.
+
+![Filter Panel](docs/images/filter-function.png)
+
+### Map View Filters
+
+**Available Filters:**
+- 🔤 **Name Search** - Type a Pokémon name to filter (e.g., "Pikachu", "Charizard")
+- 🎨 **Rarity Levels** - Toggle checkboxes to show/hide:
+  - Common (Gray)
+  - Uncommon (Blue)
+  - Rare (Orange)
+  - Very Rare (Red)
+  - Legendary (Purple)
+- ⚔️ **IV Stats** - Set minimum and maximum values for:
+  - **Attack** (0-15)
+  - **Defense** (0-15)
+  - **Stamina** (0-15)
+- 🎯 **Accuracy** - Set minimum accuracy percentage (0-100%)
+
+**How it works:**
+1. Click **Show Filters** to expand the filter panel
+2. Adjust any combination of filters
+3. The map updates in real-time showing only matching Pokémon
+4. The counter shows "Total Found: X | Showing: Y Pokémon"
+5. Click **Reset Filters** to clear all filters and show everything
+
+**Example Use Cases:**
+- Find all Legendary Pokémon: Uncheck all rarities except "Legendary"
+- High IV hunting: Set Attack, Defense, and Stamina all to 10-15
+- Specific species: Search "Dragonite" in the name field
+- Reliable spawns only: Set Accuracy minimum to 95%
+
+### Raids View Filters
+
+**Available Filters:**
+- 🔤 **Boss Search** - Search by Raid Boss name
+- 🏆 **Raid Levels** - Toggle levels 1-5
+- 👥 **Minimum Participants** - Filter by number of trainers (0-20)
+- ⏱️ **Time Remaining** - Set minimum time remaining in minutes (0-60)
+
+**How it works:**
+Same as Map filters - adjust settings and see real-time results. Perfect for finding specific raid bosses or filtering by difficulty level!
+
+### Routes View Filters
+
+- 🔤 **Route Search** - Filter your saved routes by name
+
+**Pro Tips:**
+- Filters persist while you browse - change locations without losing your filter settings
+- Combine multiple filters for precise results (e.g., "Legendary + 95% accuracy + ATK 15")
+- Use the **Hide Filters** button to get more map space while keeping filters active
+
+---
+
 ## ⚔️ Viewing Raid Battles
 
 ### Switching to Raids View

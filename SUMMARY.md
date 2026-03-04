@@ -522,6 +522,75 @@ useEffect(() => {
 }
 ```
 
+### **5. Advanced Filtering System**
+
+**Challenge**: Allow users to filter Pokémon and Raids based on multiple criteria
+
+**Solution**: Implemented comprehensive real-time filtering with multiple parameters
+
+**Map View Filters**:
+```javascript
+const [nameSearch, setNameSearch] = useState('');
+const [selectedRarities, setSelectedRarities] = useState({
+  Common: true, Uncommon: true, Rare: true, 
+  'Very Rare': true, Legendary: true
+});
+const [ivAttackMin, setIvAttackMin] = useState(0);
+const [ivAttackMax, setIvAttackMax] = useState(15);
+const [accuracyMin, setAccuracyMin] = useState(0);
+
+// Real-time filtering with useEffect
+useEffect(() => {
+  const filtered = pokemonSpawns.filter(pokemon => {
+    // Name search
+    if (!pokemon.name.toLowerCase().includes(nameSearch.toLowerCase())) 
+      return false;
+    
+    // Rarity filter
+    if (!selectedRarities[pokemon.rarity]) return false;
+    
+    // IV range filters
+    if (pokemon.iv_attack < ivAttackMin || pokemon.iv_attack > ivAttackMax) 
+      return false;
+    
+    // Accuracy threshold
+    if (pokemon.accuracy < accuracyMin) return false;
+    
+    return true;
+  });
+  
+  setFilteredPokemon(filtered);
+}, [pokemonSpawns, nameSearch, selectedRarities, ivAttackMin, ivAttackMax, accuracyMin]);
+```
+
+**Raid View Filters**:
+```javascript
+const [bossSearch, setBossSearch] = useState('');
+const [selectedLevels, setSelectedLevels] = useState({
+  1: true, 2: true, 3: true, 4: true, 5: true
+});
+const [minParticipants, setMinParticipants] = useState(0);
+const [minTimeRemaining, setMinTimeRemaining] = useState(0);
+
+// Filter raids by boss name, level, participants, and time
+const filteredRaids = raids.filter(raid => {
+  const bossName = raid.bossName || '';
+  const matchesBoss = bossName.toLowerCase().includes(bossSearch.toLowerCase());
+  const matchesLevel = selectedLevels[raid.raidLevel];
+  const matchesParticipants = raid.participants >= minParticipants;
+  const timeRemaining = (new Date(raid.endTime) - new Date()) / 1000;
+  const matchesTime = timeRemaining >= (minTimeRemaining * 60);
+  
+  return matchesBoss && matchesLevel && matchesParticipants && matchesTime;
+});
+```
+
+**UI Features**:
+- Collapsible filter panel (Show/Hide Filters button)
+- Live count display: "Total Found: X | Showing: Y Pokémon"
+- Reset Filters button to clear all filters
+- Filter persistence across location changes
+
 ---
 
 ## 🚧 Difficulties Encountered & Solutions
@@ -1157,12 +1226,13 @@ test('Map component renders markers', async () => {
 
 ✅ **Completed Features:**
 - Real-time Pokemon spawn tracking
+- Advanced filtering system (name, rarity, IV stats, accuracy)
 - Location search (address + coordinates)
 - Interactive map with custom markers
-- Raid battle visualization
+- Raid battle visualization with filters
 - Persistent search radius
 - Responsive UI design
-- Complete user documentation
+- Complete user documentation with interactive HTML guide
 
 ✅ **Technical Accomplishments:**
 - Full-stack MERN application

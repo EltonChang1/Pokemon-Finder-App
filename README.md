@@ -8,6 +8,7 @@
 
 ## Features
 - **Real-Time Pokémon Radar**: Displays nearby Pokémon spawns on an interactive map with customizable search radius.
+- **Advanced Filtering System**: Filter Pokémon by name, rarity level, IV stats (Attack/Defense/Stamina), and accuracy. Filter raids by boss name, level, participants, and time remaining.
 - **Location Search**: Search any location worldwide using address or GPS coordinates.
 - **GPS Route Import/Export**: Upload and download GPX files for optimized Pokémon hunting routes.
 - **Gym & Raid Battle Information**: Provides live updates on nearby Gym battles and Raid participation.

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeFind User Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .nav {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+        }
+
+        .section h4 {
+            color: #555;
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+        }
+
+        .section ul, .section ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+        }
+
+        .feature-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .feature-box:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.02);
+        }
+
+        .image-container p {
+            margin-top: 10px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .rarity-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .rarity-common { background: #95a5a6; color: white; }
+        .rarity-uncommon { background: #3498db; color: white; }
+        .rarity-rare { background: #f39c12; color: white; }
+        .rarity-very-rare { background: #e74c3c; color: white; }
+        .rarity-legendary { background: #9b59b6; color: white; }
+
+        .tip-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tip-box strong {
+            color: #856404;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .quick-ref-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-ref-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .quick-ref-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .quick-ref-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .footer {
+            background: #2d2d2d;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            background: #764ba2;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 PokeFind User Guide</h1>
+            <p>Your Complete Guide to Real-Time Pokémon Tracking</p>
+        </div>
+
+        <nav class="nav">
+            <ul>
+                <li><a href="#getting-started">🚀 Getting Started</a></li>
+                <li><a href="#main-features">🎯 Main Features</a></li>
+                <li><a href="#location">📍 Finding Location</a></li>
+                <li><a href="#searching">🔍 Searching Pokémon</a></li>
+                <li><a href="#filtering">🔎 Filtering</a></li>
+                <li><a href="#raids">⚔️ Raids</a></li>
+                <li><a href="#tips">💡 Tips & Tricks</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section id="getting-started" class="section">
+                <h2>🚀 Getting Started</h2>
+                
+                <h3>Accessing the App</h3>
+                <ol>
+                    <li>Open your web browser</li>
+                    <li>Navigate to the PokeFind app</li>
+                    <li>The app will load with the <strong>Pokémon Radar</strong> as the default view</li>
+                </ol>
+
+                <div class="image-container">
+                    <img src="docs/images/pokemon-radar-main.png" alt="Main Interface">
+                    <p>Main Interface</p>
+                </div>
+
+                <h3>Navigation Bar</h3>
+                <p>At the top of the screen, you'll find:</p>
+                <ul>
+                    <li><strong>🗺️ Map</strong> - View nearby Pokémon spawns</li>
+                    <li><strong>⚔️ Raids</strong> - Find active raid battles</li>
+                    <li><strong>🧭 Routes</strong> - Plan your Pokémon hunting routes</li>
+                    <li><strong>📍 Location Button</strong> - Change your search location (top right corner)</li>
+                </ul>
+            </section>
+
+            <section id="main-features" class="section">
+                <h2>🎯 Main Features</h2>
+
+                <div class="feature-box">
+                    <h3>1. Pokémon Radar (Map View)</h3>
+                    <p>The Map view shows all Pokémon spawns within your selected radius.</p>
+                    
+                    <p><strong>What you'll see:</strong></p>
+                    <ul>
+                        <li>🔵 <strong>Blue marker</strong> - Your current location</li>
+                        <li>🎨 <strong>Colored circles</strong> - Pokémon spawns (color indicates rarity)</li>
+                        <li>⭕ <strong>Large circle</strong> - Your search radius area</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <img src="docs/images/pokemon-map-view.png" alt="Pokemon Map View">
+                    <p>Pokemon Map View</p>
+                </div>
+
+                <h3>Rarity Colors</h3>
+                <div>
+                    <span class="rarity-badge rarity-common">🔘 Common</span>
+                    <span class="rarity-badge rarity-uncommon">🔵 Uncommon</span>
+                    <span class="rarity-badge rarity-rare">🟠 Rare</span>
+                    <span class="rarity-badge rarity-very-rare">🔴 Very Rare</span>
+                    <span class="rarity-badge rarity-legendary">🟣 Legendary</span>
+                </div>
+
+                <div class="feature-box">
+                    <h3>2. Search Radius Control</h3>
+                    <p>Located at the top of the map:</p>
+                    <div class="code-block">
+🎯 Search Radius (km): [5]
+                    </div>
+                    <ul>
+                        <li><strong>Default:</strong> 5 kilometers</li>
+                        <li><strong>Range:</strong> 1-20 km</li>
+                        <li><strong>How to adjust:</strong>
+                            <ol>
+                                <li>Click on the number input field</li>
+                                <li>Type your desired radius value</li>
+                                <li>Press Enter or click outside the field</li>
+                                <li>The map will automatically update with new Pokémon</li>
+                            </ol>
+                        </li>
+                    </ul>
+                    <p><strong>The radius persists</strong> - When you search a new location, your radius setting is maintained!</p>
+                </div>
+
+                <div class="feature-box">
+                    <h3>3. Location Information</h3>
+                    <p>Below the radius control, you'll see:</p>
+                    <div class="code-block">
+📍 Location: 40.4412, -79.9973
+🎯 Found: 2 Pokémon nearby
+                    </div>
+                    <p>This shows:</p>
+                    <ul>
+                        <li>Your current latitude and longitude</li>
+                        <li>Number of Pokémon spawns detected in your radius</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="location" class="section">
+                <h2>📍 Finding Your Location</h2>
+
+                <h3>Method 1: Search by Address</h3>
+                <ol>
+                    <li>Click the <strong>📍 Location</strong> button in the top-right corner of the navbar</li>
+                    <li>The Location Search modal will appear</li>
+                </ol>
+
+                <div class="image-container">
+                    <img src="docs/images/location-search-modal.png" alt="Location Search Modal">
+                    <p>Location Search Modal</p>
+                </div>
+
+                <ol start="3">
+                    <li>Under "Search by Address", enter any location:
+                        <ul>
+                            <li>City name: <code>Pittsburgh, PA</code></li>
+                            <li>Full address: <code>Times Square, New York</code></li>
+                            <li>Landmark: <code>Eiffel Tower, Paris</code></li>
+                        </ul>
+                    </li>
+                    <li>Click the <strong>🔍 Search</strong> button</li>
+                    <li>The map will automatically center on your searched location</li>
+                </ol>
+
+                <h3>Method 2: Enter Coordinates</h3>
+                <p>If you have exact GPS coordinates:</p>
+                <ol>
+                    <li>Open the Location Search modal</li>
+                    <li>Scroll to "Or Enter Coordinates" section</li>
+                    <li>Enter:
+                        <ul>
+                            <li><strong>Latitude:</strong> Between -90 and 90 (e.g., 40.5000)</li>
+                            <li><strong>Longitude:</strong> Between -180 and 180 (e.g., -79.9959)</li>
+                        </ul>
+                    </li>
+                    <li>Click <strong>🔍 Search</strong></li>
+                </ol>
+
+                <div class="tip-box">
+                    <strong>Pro Tip:</strong> The modal shows your current location coordinates, making it easy to fine-tune your search!
+                </div>
+            </section>
+
+            <section id="searching" class="section">
+                <h2>🔍 Searching for Pokémon</h2>
+
+                <h3>Viewing Pokémon Details</h3>
+                <ol>
+                    <li>Click on any Pokémon marker (colored circle with Pokémon sprite)</li>
+                    <li>A popup will display detailed information:</li>
+                </ol>
+
+                <div class="image-container">
+                    <img src="docs/images/pokemon-popup-gengar.png" alt="Pokemon Details Popup">
+                    <p>Pokemon Details Popup - Gengar</p>
+                </div>
+
+                <h3>Information Shown</h3>
+                <ul>
+                    <li><strong>Pokémon Sprite</strong> - The actual Pokémon image</li>
+                    <li><strong>#Number & Name</strong> - Pokédex ID and species name</li>
+                    <li><strong>Rarity Badge</strong> - Color-coded rarity level</li>
+                    <li><strong>IV Stats</strong> - Individual Values for Attack, Defense, and Stamina
+                        <ul>
+                            <li>Shows as values (e.g., <code>ATK: 15 | DEF: 2 | STA: 0</code>)</li>
+                            <li><strong>Total: XX.X%</strong> - Overall IV quality</li>
+                        </ul>
+                    </li>
+                    <li><strong>Spawned</strong> - When the Pokémon appeared</li>
+                    <li><strong>Despawns</strong> - When it will disappear</li>
+                    <li><strong>Accuracy</strong> - Reliability of the spawn data (88%-100%)</li>
+                    <li><strong>🗺️ Get Directions</strong> - Opens Google Maps for navigation</li>
+                </ul>
+
+                <div class="feature-box">
+                    <h3>Example Reading</h3>
+                    <div class="code-block">
+#94 Gengar
+Rarity: Rare
+IV Stats: ATK: 15 | DEF: 2 | STA: 0
+Total: 37.8%
+Spawned: 1:05:02 AM
+Despawns: 1:31:02 AM
+Accuracy: 88%
+                    </div>
+                    <p>This Gengar:</p>
+                    <ul>
+                        <li>Is a Rare spawn with an orange border</li>
+                        <li>Has max Attack (15) but low Defense and Stamina</li>
+                        <li>Will be available for ~26 minutes</li>
+                        <li>Location data is 88% accurate</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="filtering" class="section">
+                <h2>🔎 Filtering Pokémon & Raids</h2>
+
+                <p>PokeFind includes powerful filtering options to help you find exactly what you're looking for!</p>
+
+                <h3>Filter Panel</h3>
+                <p>Click the <strong>Show Filters</strong> button at the top of the Map or Raids view to reveal the filter panel.</p>
+
+                <div class="image-container">
+                    <img src="docs/images/filter-function.png" alt="Filter Panel">
+                    <p>Filter Panel</p>
+                </div>
+
+                <div class="feature-box">
+                    <h3>Map View Filters</h3>
+                    <p><strong>Available Filters:</strong></p>
+                    <ul>
+                        <li>🔤 <strong>Name Search</strong> - Type a Pokémon name to filter (e.g., "Pikachu", "Charizard")</li>
+                        <li>🎨 <strong>Rarity Levels</strong> - Toggle checkboxes to show/hide:
+                            <ul>
+                                <li>Common (Gray)</li>
+                                <li>Uncommon (Blue)</li>
+                                <li>Rare (Orange)</li>
+                                <li>Very Rare (Red)</li>
+                                <li>Legendary (Purple)</li>
+                            </ul>
+                        </li>
+                        <li>⚔️ <strong>IV Stats</strong> - Set minimum and maximum values for:
+                            <ul>
+                                <li><strong>Attack</strong> (0-15)</li>
+                                <li><strong>Defense</strong> (0-15)</li>
+                                <li><strong>Stamina</strong> (0-15)</li>
+                            </ul>
+                        </li>
+                        <li>🎯 <strong>Accuracy</strong> - Set minimum accuracy percentage (0-100%)</li>
+                    </ul>
+
+                    <h4>How it works:</h4>
+                    <ol>
+                        <li>Click <strong>Show Filters</strong> to expand the filter panel</li>
+                        <li>Adjust any combination of filters</li>
+                        <li>The map updates in real-time showing only matching Pokémon</li>
+                        <li>The counter shows "Total Found: X | Showing: Y Pokémon"</li>
+                        <li>Click <strong>Reset Filters</strong> to clear all filters and show everything</li>
+                    </ol>
+
+                    <h4>Example Use Cases:</h4>
+                    <ul>
+                        <li><strong>Find all Legendary Pokémon:</strong> Uncheck all rarities except "Legendary"</li>
+                        <li><strong>High IV hunting:</strong> Set Attack, Defense, and Stamina all to 10-15</li>
+                        <li><strong>Specific species:</strong> Search "Dragonite" in the name field</li>
+                        <li><strong>Reliable spawns only:</strong> Set Accuracy minimum to 95%</li>
+                    </ul>
+                </div>
+
+                <div class="feature-box">
+                    <h3>Raids View Filters</h3>
+                    <p><strong>Available Filters:</strong></p>
+                    <ul>
+                        <li>🔤 <strong>Boss Search</strong> - Search by Raid Boss name</li>
+                        <li>🏆 <strong>Raid Levels</strong> - Toggle levels 1-5</li>
+                        <li>👥 <strong>Minimum Participants</strong> - Filter by number of trainers (0-20)</li>
+                        <li>⏱️ <strong>Time Remaining</strong> - Set minimum time remaining in minutes (0-60)</li>
+                    </ul>
+
+                    <p><strong>How it works:</strong> Same as Map filters - adjust settings and see real-time results. Perfect for finding specific raid bosses or filtering by difficulty level!</p>
+                </div>
+
+                <div class="feature-box">
+                    <h3>Routes View Filters</h3>
+                    <ul>
+                        <li>🔤 <strong>Route Search</strong> - Filter your saved routes by name</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Pro Tips:</strong>
+                    <ul>
+                        <li>Filters persist while you browse - change locations without losing your filter settings</li>
+                        <li>Combine multiple filters for precise results (e.g., "Legendary + 95% accuracy + ATK 15")</li>
+                        <li>Use the <strong>Hide Filters</strong> button to get more map space while keeping filters active</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="raids" class="section">
+                <h2>⚔️ Viewing Raid Battles</h2>
+
+                <h3>Switching to Raids View</h3>
+                <ol>
+                    <li>Click <strong>⚔️ Raids</strong> in the navigation bar</li>
+                    <li>The map will reload showing raid battle locations</li>
+                </ol>
+
+                <h3>Raid Levels (indicated by marker color)</h3>
+                <ul>
+                    <li>🔘 <strong>Gray</strong> - Level 1 Raid (Easiest)</li>
+                    <li>🔵 <strong>Blue</strong> - Level 2 Raid</li>
+                    <li>🟠 <strong>Orange</strong> - Level 3 Raid</li>
+                    <li>🔴 <strong>Red</strong> - Level 4 Raid</li>
+                    <li>🟣 <strong>Purple</strong> - Level 5 Raid (Legendary)</li>
+                </ul>
+
+                <h3>Raid Details</h3>
+                <p>Click on any raid marker to see:</p>
+                <ul>
+                    <li><strong>Gym Name</strong> - Where the raid is happening</li>
+                    <li><strong>Boss Pokémon</strong> - Which Pokémon you'll battle</li>
+                    <li><strong>Raid Level</strong> - Difficulty tier (1-5)</li>
+                    <li><strong>Time Remaining</strong> - How long until the raid expires</li>
+                    <li><strong>CP Range</strong> - Combat Power range of the boss</li>
+                    <li><strong>Coordinates</strong> - Exact latitude/longitude</li>
+                </ul>
+            </section>
+
+            <section id="tips" class="section">
+                <h2>💡 Tips & Tricks</h2>
+
+                <div class="feature-box">
+                    <h3>Maximizing Your Hunt</h3>
+                    <ol>
+                        <li><strong>Start with a larger radius</strong> (10-15km) to survey the area</li>
+                        <li><strong>Narrow down to 3-5km</strong> for targets you want to reach</li>
+                        <li><strong>Check Despawn times</strong> - Prioritize Pokémon that are expiring soon</li>
+                        <li><strong>Focus on high IV totals</strong> - Pokémon above 80% total IV are worth catching</li>
+                    </ol>
+                </div>
+
+                <div class="feature-box">
+                    <h3>Time Management</h3>
+                    <ul>
+                        <li>Pokémon typically spawn for <strong>30 minutes</strong></li>
+                        <li>Raids last <strong>45 minutes</strong> after they hatch</li>
+                        <li>Use "Despawns" time to plan your route</li>
+                        <li>The <strong>🗺️ Get Directions</strong> button opens in Google Maps for real-time navigation</li>
+                    </ul>
+                </div>
+
+                <div class="feature-box">
+                    <h3>Search Strategies</h3>
+                    <h4>Urban Areas:</h4>
+                    <ul>
+                        <li>Use smaller radius (3-5km)</li>
+                        <li>High spawn density means frequent updates</li>
+                    </ul>
+
+                    <h4>Rural Areas:</h4>
+                    <ul>
+                        <li>Use larger radius (10-20km)</li>
+                        <li>Spawns may be spread out</li>
+                    </ul>
+
+                    <h4>Finding Rares:</h4>
+                    <ul>
+                        <li>Legendary (Purple) and Very Rare (Red) Pokémon are the most valuable</li>
+                        <li>Check high-accuracy spawns (95%+) for reliability</li>
+                        <li>Use the Raids tab for guaranteed Legendary encounters</li>
+                    </ul>
+                </div>
+
+                <div class="feature-box">
+                    <h3>Interface Tips</h3>
+                    <ul>
+                        <li><strong>The radius persists!</strong> Change locations without resetting your search distance</li>
+                        <li><strong>Zoom controls</strong> are on the left side of the map (+ and -)</li>
+                        <li><strong>Click the blue marker</strong> to verify your current search coordinates</li>
+                        <li><strong>Refresh sensitivity</strong> - The map auto-updates when you change radius or location</li>
+                    </ul>
+                </div>
+
+                <h3>Troubleshooting</h3>
+                
+                <h4>"Failed to load Pokémon data"</h4>
+                <p><strong>Solution:</strong> Make sure the backend server is running on port 8080</p>
+
+                <h4>No Pokémon showing up</h4>
+                <p><strong>Try:</strong></p>
+                <ul>
+                    <li>Increase your search radius</li>
+                    <li>Search a different location (urban areas have more spawns)</li>
+                    <li>Check that the database has been seeded with Pokémon data</li>
+                </ul>
+
+                <h4>Map not recentering after search</h4>
+                <p><strong>Fix:</strong> The map should automatically recenter with the RecenterMap feature. If not, try:</p>
+                <ul>
+                    <li>Closing and reopening the location modal</li>
+                    <li>Refreshing the browser page</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>📝 Quick Reference</h2>
+                <table class="quick-ref-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Change Location</td>
+                            <td>Top-right button</td>
+                            <td>Click → Enter address or coordinates</td>
+                        </tr>
+                        <tr>
+                            <td>Adjust Radius</td>
+                            <td>Top of map</td>
+                            <td>Type number (1-20) + Enter</td>
+                        </tr>
+                        <tr>
+                            <td>View Pokémon Info</td>
+                            <td>Map marker</td>
+                            <td>Click colored circle</td>
+                        </tr>
+                        <tr>
+                            <td>Filter Pokémon</td>
+                            <td>Show Filters button</td>
+                            <td>Toggle filters and see live results</td>
+                        </tr>
+                        <tr>
+                            <td>Get Directions</td>
+                            <td>Pokémon popup</td>
+                            <td>Click "Get Directions" button</td>
+                        </tr>
+                        <tr>
+                            <td>Switch Views</td>
+                            <td>Navbar</td>
+                            <td>Map / Raids / Routes</td>
+                        </tr>
+                        <tr>
+                            <td>Zoom Map</td>
+                            <td>Map controls</td>
+                            <td>+/- buttons or scroll</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🎮 Happy Hunting!</h2>
+                <p>You're now ready to catch 'em all with PokeFind! Remember:</p>
+                <ul>
+                    <li>🔍 Search any location worldwide</li>
+                    <li>🎯 Adjust your radius to match your area</li>
+                    <li>🔎 Use filters to find exactly what you want</li>
+                    <li>⏰ Watch despawn timers</li>
+                    <li>🌟 Prioritize rare and high-IV Pokémon</li>
+                    <li>🗺️ Use Get Directions for real-time navigation</li>
+                </ul>
+                <p><strong>Need help?</strong> Check the troubleshooting section or report issues on the GitHub repository.</p>
+            </section>
+        </div>
+
+        <div class="footer">
+            <p>PokeFind User Guide | Last Updated: March 2026</p>
+            <p><a href="https://github.com/EltonChang1/Pokemon-Finder-App" target="_blank" style="color: #667eea; text-decoration: none;">
+                <i class="fab fa-github"></i> View on GitHub
+            </a></p>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Animate sections on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

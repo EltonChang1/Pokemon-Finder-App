@@ -36,6 +36,11 @@ All screenshots have been added and renamed to match the User Guide references:
 - **Shows**: Raid markers, map interface for viewing gym battles
 - **Used in**: Viewing Raid Battles section
 
+### 7. `filter-function.png`
+- **Description**: Filter panel interface for Pokemon and Raids
+- **Shows**: Name search, rarity toggles, IV range sliders, accuracy controls, Reset Filters button
+- **Used in**: Filtering Pokemon & Raids section
+
 ---
 
 *All screenshots are properly linked in USERGUIDE.md and will display when viewed on GitHub.*
