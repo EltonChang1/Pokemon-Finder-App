@@ -6,6 +6,8 @@
 
 **New to PokeFind?** Check out our comprehensive [User Guide](USERGUIDE.md) with screenshots and step-by-step instructions!
 
+**Or try the [Interactive User Guide](https://eltonchang1.github.io/userguide.html)** for a modern, animated walkthrough of all features!
+
 ## Features
 - **Real-Time Pokémon Radar**: Displays nearby Pokémon spawns on an interactive map with customizable search radius.
 - **Advanced Filtering System**: Filter Pokémon by name, rarity level, IV stats (Attack/Defense/Stamina), and accuracy. Filter raids by boss name, level, participants, and time remaining.
