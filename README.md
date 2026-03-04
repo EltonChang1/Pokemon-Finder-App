@@ -2,10 +2,17 @@
 
 **PokeFind** is a web application designed to enhance the Pokémon Go experience by providing real-time Pokémon radar, Gym and Raid information, and GPS route import/export features.
 
+## 📖 User Guide
+
+**New to PokeFind?** Check out our comprehensive [User Guide](USERGUIDE.md) with screenshots and step-by-step instructions!
+
 ## Features
-- **Real-Time Pokémon Radar**: Displays nearby Pokémon spawns on an interactive map.
-- **GPS Route Import/Export**: Allows users to upload and download GPX files for optimized Pokémon hunting routes.
+- **Real-Time Pokémon Radar**: Displays nearby Pokémon spawns on an interactive map with customizable search radius.
+- **Location Search**: Search any location worldwide using address or GPS coordinates.
+- **GPS Route Import/Export**: Upload and download GPX files for optimized Pokémon hunting routes.
 - **Gym & Raid Battle Information**: Provides live updates on nearby Gym battles and Raid participation.
+- **Detailed Pokémon Info**: View IV stats, spawn/despawn times, rarity levels, and accuracy ratings.
+- **Interactive Maps**: Powered by Leaflet with smooth recentering and zoom controls.
 
 ## Tech Stack
 ### Frontend:
