@@ -15,12 +15,14 @@ L.Icon.Default.mergeOptions({
 
 function Routes() {
   const [routes, setRoutes] = useState([]);
+  const [filteredRoutes, setFilteredRoutes] = useState([]);
   const [gpxCoordinates, setGpxCoordinates] = useState([]);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [mapCenter, setMapCenter] = useState([51.505, -0.09]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [routeName, setRouteName] = useState('');
+  const [routeSearch, setRouteSearch] = useState('');
 
   // Fetch saved routes
   useEffect(() => {
@@ -40,6 +42,17 @@ function Routes() {
 
     fetchRoutes();
   }, []);
+
+  // Apply route name filter
+  useEffect(() => {
+    const filtered = routes.filter(route => {
+      if (routeSearch && !route.routeName.toLowerCase().includes(routeSearch.toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
+    setFilteredRoutes(filtered);
+  }, [routes, routeSearch]);
 
   // Parse GPX file
   const parseGPX = (gpxString) => {
@@ -218,11 +231,31 @@ function Routes() {
 
         <div className="saved-routes">
           <h3>Saved Routes</h3>
+          
+          <div style={{ marginBottom: '15px' }}>
+            <input
+              type="text"
+              placeholder="🔎 Search routes..."
+              value={routeSearch}
+              onChange={(e) => setRouteSearch(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #bdc3c7',
+                fontSize: '14px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+          
           {loading && <p className="loading">Loading routes...</p>}
-          {routes.length === 0 && !loading && <p className="no-routes">No saved routes yet</p>}
+          {filteredRoutes.length === 0 && !loading && (
+            <p className="no-routes">{routes.length > 0 ? 'No routes match your search' : 'No saved routes yet'}</p>
+          )}
 
           <ul className="routes-list">
-            {routes.map((route) => (
+            {filteredRoutes.map((route) => (
               <li
                 key={route._id}
                 className={`route-item ${selectedRoute?._id === route._id ? 'active' : ''}`}

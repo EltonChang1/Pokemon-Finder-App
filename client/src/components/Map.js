@@ -59,9 +59,28 @@ function RecenterMap({ center, zoom = 13 }) {
 
 function Map({ userLocation }) {
   const [pokemonSpawns, setPokemonSpawns] = useState([]);
+  const [filteredPokemon, setFilteredPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchRadius, setSearchRadius] = useState(5);
+  
+  // Filter states
+  const [nameSearch, setNameSearch] = useState('');
+  const [selectedRarities, setSelectedRarities] = useState({
+    'Common': true,
+    'Uncommon': true,
+    'Rare': true,
+    'Very Rare': true,
+    'Legendary': true,
+  });
+  const [ivAttackMin, setIvAttackMin] = useState(0);
+  const [ivAttackMax, setIvAttackMax] = useState(15);
+  const [ivDefenseMin, setIvDefenseMin] = useState(0);
+  const [ivDefenseMax, setIvDefenseMax] = useState(15);
+  const [ivStaminaMin, setIvStaminaMin] = useState(0);
+  const [ivStaminaMax, setIvStaminaMax] = useState(15);
+  const [accuracyMin, setAccuracyMin] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Fetch nearby Pokémon spawns
   useEffect(() => {
@@ -83,6 +102,45 @@ function Map({ userLocation }) {
     fetchNearbyPokemon();
   }, [userLocation, searchRadius]);
 
+  // Apply filters whenever filters change or pokemonSpawns updates
+  useEffect(() => {
+    const filtered = pokemonSpawns.filter(pokemon => {
+      // Name filter
+      if (nameSearch && !pokemon.name.toLowerCase().includes(nameSearch.toLowerCase())) {
+        return false;
+      }
+      
+      // Rarity filter
+      if (!selectedRarities[pokemon.rarity]) {
+        return false;
+      }
+      
+      // IV Attack filter
+      if ((pokemon.iv_attack || 0) < ivAttackMin || (pokemon.iv_attack || 0) > ivAttackMax) {
+        return false;
+      }
+      
+      // IV Defense filter
+      if ((pokemon.iv_defense || 0) < ivDefenseMin || (pokemon.iv_defense || 0) > ivDefenseMax) {
+        return false;
+      }
+      
+      // IV Stamina filter
+      if ((pokemon.iv_stamina || 0) < ivStaminaMin || (pokemon.iv_stamina || 0) > ivStaminaMax) {
+        return false;
+      }
+      
+      // Accuracy filter
+      if ((pokemon.accuracy || 100) < accuracyMin) {
+        return false;
+      }
+      
+      return true;
+    });
+    
+    setFilteredPokemon(filtered);
+  }, [pokemonSpawns, nameSearch, selectedRarities, ivAttackMin, ivAttackMax, ivDefenseMin, ivDefenseMax, ivStaminaMin, ivStaminaMax, accuracyMin]);
+
   const getRarityColor = (rarity) => {
     const colors = {
       'Common': '#95a5a6',
@@ -92,6 +150,31 @@ function Map({ userLocation }) {
       'Legendary': '#9b59b6',
     };
     return colors[rarity] || '#95a5a6';
+  };
+
+  const handleRarityToggle = (rarity) => {
+    setSelectedRarities(prev => ({
+      ...prev,
+      [rarity]: !prev[rarity]
+    }));
+  };
+
+  const resetFilters = () => {
+    setNameSearch('');
+    setSelectedRarities({
+      'Common': true,
+      'Uncommon': true,
+      'Rare': true,
+      'Very Rare': true,
+      'Legendary': true,
+    });
+    setIvAttackMin(0);
+    setIvAttackMax(15);
+    setIvDefenseMin(0);
+    setIvDefenseMax(15);
+    setIvStaminaMin(0);
+    setIvStaminaMax(15);
+    setAccuracyMin(0);
   };
 
   return (
@@ -109,10 +192,193 @@ function Map({ userLocation }) {
           />
         </div>
 
+        <button 
+          onClick={() => setShowFilters(!showFilters)}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: showFilters ? '#e74c3c' : '#3498db',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            marginTop: '10px'
+          }}
+        >
+          {showFilters ? '✕ Hide Filters' : '⚙️ Show Filters'}
+        </button>
+
+        {/* Filter Panel */}
+        {showFilters && (
+          <div style={{
+            marginTop: '15px',
+            padding: '15px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+            border: '2px solid #3498db'
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: '15px' }}>🔍 Advanced Filters</h3>
+            
+            {/* Name Search */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                🔎 Search Pokémon Name:
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., Pikachu, Charizard..."
+                value={nameSearch}
+                onChange={(e) => setNameSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #bdc3c7',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            {/* Rarity Filter */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                ✨ Rarity:
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {Object.keys(selectedRarities).map(rarity => (
+                  <label key={rarity} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedRarities[rarity]}
+                      onChange={() => handleRarityToggle(rarity)}
+                    />
+                    <span style={{
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      backgroundColor: getRarityColor(rarity),
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}>
+                      {rarity}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* IV Stats Filters */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                💪 IV Attack: {ivAttackMin} - {ivAttackMax}
+              </label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  value={ivAttackMin}
+                  onChange={(e) => setIvAttackMin(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  value={ivAttackMax}
+                  onChange={(e) => setIvAttackMax(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                🛡️ IV Defense: {ivDefenseMin} - {ivDefenseMax}
+              </label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  value={ivDefenseMin}
+                  onChange={(e) => setIvDefenseMin(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  value={ivDefenseMax}
+                  onChange={(e) => setIvDefenseMax(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                ❤️ IV Stamina: {ivStaminaMin} - {ivStaminaMax}
+              </label>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  value={ivStaminaMin}
+                  onChange={(e) => setIvStaminaMin(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="15"
+                  value={ivStaminaMax}
+                  onChange={(e) => setIvStaminaMax(Number(e.target.value))}
+                  style={{ flex: 1 }}
+                />
+              </div>
+            </div>
+
+            {/* Accuracy Filter */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                🎯 Accuracy: ≥ {accuracyMin}%
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={accuracyMin}
+                onChange={(e) => setAccuracyMin(Number(e.target.value))}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            <button
+              onClick={resetFilters}
+              style={{
+                width: '100%',
+                padding: '8px',
+                backgroundColor: '#95a5a6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              ↺ Reset Filters
+            </button>
+          </div>
+        )}
+
         {/* Status Info */}
         <div className="status-info">
           <p>📍 Location: {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}</p>
-          <p>🎯 Found: {pokemonSpawns.length} Pokémon nearby</p>
+          <p>🎯 Total Found: {pokemonSpawns.length} | Showing: {filteredPokemon.length} Pokémon</p>
           {loading && <p className="loading">Loading...</p>}
           {error && <p className="error">{error}</p>}
         </div>
@@ -140,7 +406,7 @@ function Map({ userLocation }) {
         <Circle center={userLocation} radius={searchRadius * 1000} />
 
         {/* Pokémon Spawn Markers */}
-        {pokemonSpawns.map((pokemon) => (
+        {filteredPokemon.map((pokemon) => (
           <Marker
             key={pokemon._id}
             position={[pokemon.latitude, pokemon.longitude]}

@@ -25,9 +25,23 @@ function RecenterMap({ center, zoom = 13 }) {
 
 function Raids({ userLocation }) {
   const [raids, setRaids] = useState([]);
+  const [filteredRaids, setFilteredRaids] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchRadius, setSearchRadius] = useState(5);
+  
+  // Filter states
+  const [bossSearch, setBossSearch] = useState('');
+  const [selectedLevels, setSelectedLevels] = useState({
+    1: true,
+    2: true,
+    3: true,
+    4: true,
+    5: true,
+  });
+  const [minParticipants, setMinParticipants] = useState(0);
+  const [minTimeRemaining, setMinTimeRemaining] = useState(0); // in seconds
+  const [showFilters, setShowFilters] = useState(false);
 
   // Fetch nearby raids
   useEffect(() => {
@@ -49,7 +63,60 @@ function Raids({ userLocation }) {
     fetchNearbyRaids();
   }, [userLocation, searchRadius]);
 
-  const getRaidColor = (level) => {
+  // Apply filters
+  useEffect(() => {
+    const filtered = raids.filter(raid => {
+      // Boss name filter
+      if (bossSearch && !raid.bossName.toLowerCase().includes(bossSearch.toLowerCase())) {
+        return false;
+      }
+      
+      // Raid level filter
+      if (!selectedLevels[raid.raidLevel]) {
+        return false;
+      }
+      
+      // Participants filter
+      if (raid.participants < minParticipants) {
+        return false;
+      }
+      
+      // Time remaining filter
+      const now = new Date();
+      const endTime = new Date(raid.endTime);
+      const timeRemaining = Math.floor((endTime - now) / 1000);
+      
+      if (timeRemaining < minTimeRemaining) {
+        return false;
+      }
+      
+      return true;
+    });
+    
+    setFilteredRaids(filtered);
+  }, [raids, bossSearch, selectedLevels, minParticipants, minTimeRemaining]);
+
+  const handleLevelToggle = (level) => {
+    setSelectedLevels(prev => ({
+      ...prev,
+      [level]: !prev[level]
+    }));
+  };
+
+  const resetFilters = () => {
+    setBossSearch('');
+    setSelectedLevels({
+      1: true,
+      2: true,
+      3: true,
+      4: true,
+      5: true,
+    });
+    setMinParticipants(0);
+    setMinTimeRemaining(0);
+  };
+
+  const getTimeRemaining = (endTime) => {
     const colors = {
       1: '#95a5a6',
       2: '#3498db',
@@ -86,9 +153,135 @@ function Raids({ userLocation }) {
           />
         </div>
 
+        <button 
+          onClick={() => setShowFilters(!showFilters)}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: showFilters ? '#e74c3c' : '#3498db',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            marginTop: '10px'
+          }}
+        >
+          {showFilters ? '✕ Hide Filters' : '⚙️ Show Filters'}
+        </button>
+
+        {/* Filter Panel */}
+        {showFilters && (
+          <div style={{
+            marginTop: '15px',
+            padding: '15px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '8px',
+            border: '2px solid #3498db'
+          }}>
+            <h3 style={{ marginTop: 0, marginBottom: '15px' }}>🔍 Advanced Raid Filters</h3>
+            
+            {/* Boss Search */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                🐉 Search Boss Name:
+              </label>
+              <input
+                type="text"
+                placeholder="e.g., Articuno, Moltres..."
+                value={bossSearch}
+                onChange={(e) => setBossSearch(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  border: '1px solid #bdc3c7',
+                  fontSize: '14px',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            {/* Raid Level Filter */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                ⭐ Raid Level:
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {[1, 2, 3, 4, 5].map(level => (
+                  <label key={level} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedLevels[level]}
+                      onChange={() => handleLevelToggle(level)}
+                    />
+                    <span style={{
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      backgroundColor: getRaidColor(level),
+                      color: 'white',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}>
+                      Level {level}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Minimum Participants */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                👥 Minimum Participants: {minParticipants}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="20"
+                value={minParticipants}
+                onChange={(e) => setMinParticipants(Number(e.target.value))}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            {/* Minimum Time Remaining */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                ⏱️ Minimum Time Remaining: {minTimeRemaining > 0 ? `${Math.floor(minTimeRemaining / 60)}m` : 'Any'}
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="3600"
+                step="60"
+                value={minTimeRemaining}
+                onChange={(e) => setMinTimeRemaining(Number(e.target.value))}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            <button
+              onClick={resetFilters}
+              style={{
+                width: '100%',
+                padding: '8px',
+                backgroundColor: '#95a5a6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              ↺ Reset Filters
+            </button>
+          </div>
+        )}
+
         <div className="status-info">
           <p>📍 Location: {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}</p>
-          <p>🎯 Found: {raids.length} Raids nearby</p>
+          <p>🎯 Total Found: {raids.length} | Showing: {filteredRaids.length} Raids</p>
           {loading && <p className="loading">Loading...</p>}
           {error && <p className="error">{error}</p>}
         </div>
@@ -116,7 +309,7 @@ function Raids({ userLocation }) {
         <Circle center={userLocation} radius={searchRadius * 1000} />
 
         {/* Raid Markers */}
-        {raids.map((raid) => (
+        {filteredRaids.map((raid) => (
           <Marker
             key={raid._id}
             position={[raid.latitude, raid.longitude]}
