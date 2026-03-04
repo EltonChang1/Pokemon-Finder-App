@@ -8,13 +8,14 @@
 
 .raid-controls {
   background: white;
-  padding: 1.5rem;
+  padding: 15px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  overflow-y: auto;
-  flex-shrink: 0;
-  max-height: 40vh;
   border-bottom: 2px solid #ecf0f1;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .raid-controls h2 {

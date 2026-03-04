@@ -77,6 +77,35 @@ body {
   border-bottom: 2px solid white;
 }
 
+/* Location Search Button */
+.location-search-item {
+  margin-left: auto;
+}
+
+.location-search-btn {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.location-search-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.location-search-btn:active {
+  transform: translateY(0);
+}
+
 /* Main Content */
 .main-content {
   flex: 1;

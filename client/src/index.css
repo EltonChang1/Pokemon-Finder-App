@@ -27,10 +27,13 @@ body, html {
   .map-controls {
     overflow-y: auto;
     flex-shrink: 0;
-    padding: 20px;
+    padding: 15px 20px;
     background: white;
-    max-height: 40vh;
     border-bottom: 2px solid #ecf0f1;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
   }
 
   /* Make the leaflet container fill remaining space */
