@@ -293,7 +293,7 @@ function Map() {
         </div>
       </div>
 
-      <MapContainer center={userLocation} zoom={13} style={{ height: 'calc(100% - 200px)', width: '100%' }}>
+      <MapContainer center={userLocation} zoom={13} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; OpenStreetMap contributors'
