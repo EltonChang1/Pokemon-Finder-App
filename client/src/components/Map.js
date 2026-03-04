@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { pokemonAPI } from '../api';
@@ -47,28 +47,21 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-function Map({ userLocation, onLocationChange }) {
+function RecenterMap({ center, zoom = 13 }) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [map, center, zoom]);
+
+  return null;
+}
+
+function Map({ userLocation }) {
   const [pokemonSpawns, setPokemonSpawns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchRadius, setSearchRadius] = useState(5);
-
-  // Get user's current location
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          onLocationChange([latitude, longitude]);
-          console.log(`User geolocation: ${latitude}, ${longitude}`);
-        },
-        (error) => {
-          console.error('Error getting user location:', error.message);
-          // Use default location passed from props
-        }
-      );
-    }
-  }, [onLocationChange]);
 
   // Fetch nearby Pokémon spawns
   useEffect(() => {
@@ -126,6 +119,7 @@ function Map({ userLocation, onLocationChange }) {
       </div>
 
       <MapContainer center={userLocation} zoom={13} style={{ height: '100%', width: '100%' }}>
+        <RecenterMap center={userLocation} zoom={13} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; OpenStreetMap contributors'

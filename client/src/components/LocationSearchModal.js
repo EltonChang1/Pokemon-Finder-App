@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/LocationSearchModal.css';
 
 function LocationSearchModal({ isOpen, onClose, onLocationChange, currentLocation }) {
   const [addressInput, setAddressInput] = useState('');
   const [inputLat, setInputLat] = useState(currentLocation?.[0]?.toFixed(4) || '40.4406');
   const [inputLng, setInputLng] = useState(currentLocation?.[1]?.toFixed(4) || '-79.9959');
-  const [isMapClickMode, setIsMapClickMode] = useState(false);
-  const [mapClickMessage, setMapClickMessage] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && currentLocation?.length === 2) {
+      setInputLat(currentLocation[0].toFixed(4));
+      setInputLng(currentLocation[1].toFixed(4));
+      setError(null);
+    }
+  }, [isOpen, currentLocation]);
 
   const handleAddressSearch = async () => {
     if (!addressInput.trim()) {

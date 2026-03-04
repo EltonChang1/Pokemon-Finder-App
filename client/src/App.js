@@ -51,9 +51,9 @@ function App() {
         </nav>
 
         <main className="main-content">
-          <Route exact path="/" render={() => <Map userLocation={userLocation} onLocationChange={handleLocationChange} />} />
+          <Route exact path="/" render={() => <Map userLocation={userLocation} />} />
           <Route path="/routes" component={Routes} />
-          <Route path="/raids" render={() => <Raids userLocation={userLocation} onLocationChange={handleLocationChange} />} />
+          <Route path="/raids" render={() => <Raids userLocation={userLocation} />} />
         </main>
 
         <LocationSearchModal 
