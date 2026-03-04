@@ -30,6 +30,18 @@ const pokemonSchema = new mongoose.Schema({
         type: Date,
         required: false,
     },
+    iv_attack: {
+        type: Number,
+        default: 0, // 0-15
+    },
+    iv_defense: {
+        type: Number,
+        default: 0, // 0-15
+    },
+    iv_stamina: {
+        type: Number,
+        default: 0, // 0-15
+    },
     accuracy: {
         type: Number,
         default: 100, // Confidence percentage

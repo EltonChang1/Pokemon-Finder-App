@@ -19,17 +19,25 @@ exports.getNearbyPokemon = async (req, res) => {
             return res.status(400).json({ message: "Latitude and longitude are required" });
         }
 
+        const latitudeNum = parseFloat(latitude);
+        const longitudeNum = parseFloat(longitude);
+        const radiusNum = parseFloat(radius);
+
+        if (Number.isNaN(latitudeNum) || Number.isNaN(longitudeNum) || Number.isNaN(radiusNum)) {
+            return res.status(400).json({ message: "Latitude, longitude, and radius must be valid numbers" });
+        }
+
         // Convert radius from km to degrees (approximately 1 degree = 111 km)
-        const radiusInDegrees = radius / 111;
+        const radiusInDegrees = radiusNum / 111;
 
         const nearbyPokemon = await Pokemon.find({
             latitude: {
-                $gte: latitude - radiusInDegrees,
-                $lte: latitude + radiusInDegrees,
+                $gte: latitudeNum - radiusInDegrees,
+                $lte: latitudeNum + radiusInDegrees,
             },
             longitude: {
-                $gte: longitude - radiusInDegrees,
-                $lte: longitude + radiusInDegrees,
+                $gte: longitudeNum - radiusInDegrees,
+                $lte: longitudeNum + radiusInDegrees,
             },
         });
 

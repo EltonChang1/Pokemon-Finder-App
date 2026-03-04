@@ -5,7 +5,41 @@ import 'leaflet/dist/leaflet.css';
 import { pokemonAPI } from '../api';
 import './Map.css';
 
-// Fix for default markers in Leaflet
+// Helper: Create custom Pokémon icon from sprite URL
+const createPokemonIcon = (pokedexId, rarity) => {
+  const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokedexId}.png`;
+  const rarityColors = {
+    'Common': '#95a5a6',
+    'Uncommon': '#3498db',
+    'Rare': '#f39c12',
+    'Very Rare': '#e74c3c',
+    'Legendary': '#9b59b6',
+  };
+  
+  return L.divIcon({
+    html: `
+      <div style="
+        background: white;
+        border: 3px solid ${rarityColors[rarity] || '#95a5a6'};
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      ">
+        <img src="${spriteUrl}" alt="Pokemon" style="width: 35px; height: 35px;" />
+      </div>
+    `,
+    className: 'pokemon-marker',
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20],
+  });
+};
+
+// Fix for default markers in Leaflet (for user location)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -15,7 +49,7 @@ L.Icon.Default.mergeOptions({
 
 function Map() {
   const [pokemonSpawns, setPokemonSpawns] = useState([]);
-  const [userLocation, setUserLocation] = useState([51.505, -0.09]); // Default to London
+  const [userLocation, setUserLocation] = useState([40.4406, -79.9959]); // Default to Pittsburgh, PA
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchRadius, setSearchRadius] = useState(5);
@@ -118,11 +152,18 @@ function Map() {
           <Marker
             key={pokemon._id}
             position={[pokemon.latitude, pokemon.longitude]}
-            title={pokemon.name}
+            icon={createPokemonIcon(pokemon.pokedexId, pokemon.rarity)}
           >
             <Popup>
-              <div className="popup">
-                <h3>{pokemon.name}</h3>
+              <div className="popup pokemon-popup">
+                <div style={{ textAlign: 'center' }}>
+                  <img 
+                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.pokedexId}.png`}
+                    alt={pokemon.name}
+                    style={{ width: '80px', height: '80px' }}
+                  />
+                  <h3>#{pokemon.pokedexId} {pokemon.name}</h3>
+                </div>
                 <p>
                   <strong>Rarity:</strong>
                   <span
@@ -131,6 +172,15 @@ function Map() {
                   >
                     {pokemon.rarity}
                   </span>
+                </p>
+                <p>
+                  <strong>IV Stats:</strong>
+                  <br />
+                  ATK: {pokemon.iv_attack || 0} | DEF: {pokemon.iv_defense || 0} | STA: {pokemon.iv_stamina || 0}
+                  <br />
+                  <strong style={{ color: pokemon.iv_attack + pokemon.iv_defense + pokemon.iv_stamina > 30 ? '#27ae60' : '#95a5a6' }}>
+                    Total: {(((pokemon.iv_attack || 0) + (pokemon.iv_defense || 0) + (pokemon.iv_stamina || 0)) / 45 * 100).toFixed(1)}%
+                  </strong>
                 </p>
                 <p>
                   <strong>Spawned:</strong> {new Date(pokemon.spawnTime).toLocaleTimeString()}
@@ -143,6 +193,25 @@ function Map() {
                 <p>
                   <strong>Accuracy:</strong> {pokemon.accuracy}%
                 </p>
+                <a 
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${pokemon.latitude},${pokemon.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-block',
+                    marginTop: '10px',
+                    padding: '8px 16px',
+                    backgroundColor: '#4285f4',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}
+                >
+                  🗺️ Get Directions
+                </a>
               </div>
             </Popup>
           </Marker>
