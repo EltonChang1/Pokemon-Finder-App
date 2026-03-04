@@ -116,7 +116,7 @@ function Raids({ userLocation }) {
     setMinTimeRemaining(0);
   };
 
-  const getTimeRemaining = (endTime) => {
+  const getRaidColor = (level) => {
     const colors = {
       1: '#95a5a6',
       2: '#3498db',
