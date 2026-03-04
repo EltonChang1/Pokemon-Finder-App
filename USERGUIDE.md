@@ -159,8 +159,6 @@ This Gengar:
 - Will be available for ~26 minutes
 - Location data is 88% accurate
 
-![Pokemon Details Popup - Tyranitar](docs/images/pokemon-popup-tyranitar.png)
-
 ---
 
 ## 🔎 Filtering Pokémon & Raids
@@ -229,9 +227,7 @@ Same as Map filters - adjust settings and see real-time results. Perfect for fin
 ### Switching to Raids View
 
 1. Click **⚔️ Raids** in the navigation bar
-2. The map will reload showing raid battle locations
-
-![Raids View](docs/images/raids-view.png)
+2. The map will reload showing raid battle locations with raid markers at gym locations
 
 **Raid Levels** (indicated by marker color):
 - 🔘 **Gray** - Level 1 Raid (Easiest)
