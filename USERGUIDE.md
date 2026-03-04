@@ -170,6 +170,8 @@ This Gengar:
 1. Click **⚔️ Raids** in the navigation bar
 2. The map will reload showing raid battle locations
 
+![Raids View](docs/images/raids-view.png)
+
 **Raid Levels** (indicated by marker color):
 - 🔘 **Gray** - Level 1 Raid (Easiest)
 - 🔵 **Blue** - Level 2 Raid  
