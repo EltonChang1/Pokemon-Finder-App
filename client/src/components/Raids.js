@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -60,7 +61,22 @@ function Raids({ userLocation }) {
   const [minParticipants, setMinParticipants] = useState(0);
   const [minTimeRemaining, setMinTimeRemaining] = useState(0);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [raidListOpen, setRaidListOpen] = useState(false);
+  const isMdUp = useMediaQuery('(min-width: 768px)');
   const [, setTick] = useState(0);
+
+  useEffect(() => {
+    setRaidListOpen(isMdUp);
+  }, [isMdUp]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (!isMdUp && raidListOpen) setRaidListOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMdUp, raidListOpen]);
 
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 1000);
@@ -125,14 +141,14 @@ function Raids({ userLocation }) {
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
       <div className="relative flex min-w-0 flex-1 flex-col">
-        <header className="z-10 flex h-16 shrink-0 items-center justify-between border-b border-outline-variant/10 bg-surface-container-low/90 px-8 backdrop-blur-xl">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="relative">
+        <header className="z-10 flex h-16 shrink-0 items-center justify-between border-b border-outline-variant/10 bg-surface-container-low/90 px-3 backdrop-blur-xl sm:px-8">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-4">
+            <div className="relative min-w-0">
               <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-outline">
                 search
               </span>
               <input
-                className="w-64 border-b border-outline-variant bg-surface-container-lowest py-2 pl-10 pr-4 text-[10px] font-bold uppercase tracking-widest text-on-surface placeholder:text-slate-600 focus:border-primary focus:outline-none focus:ring-0"
+                className="w-44 border-b border-outline-variant bg-surface-container-lowest py-2 pl-10 pr-2 text-[10px] font-bold uppercase tracking-widest text-on-surface placeholder:text-slate-600 focus:border-primary focus:outline-none focus:ring-0 sm:w-64 sm:pr-4"
                 placeholder="Filter by boss name..."
                 value={bossSearch}
                 onChange={(e) => setBossSearch(e.target.value)}
@@ -175,7 +191,17 @@ function Raids({ userLocation }) {
               {showAdvanced ? 'Hide' : 'Advanced'}
             </button>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            {!isMdUp && (
+              <button
+                type="button"
+                className="p-2 text-primary hover:text-primary/80 md:hidden"
+                onClick={() => setRaidListOpen(true)}
+                title="Nearby raids list"
+              >
+                <span className="material-symbols-outlined">view_list</span>
+              </button>
+            )}
             <span className="material-symbols-outlined cursor-default text-slate-400">notifications</span>
             <span className="material-symbols-outlined cursor-default text-slate-400">settings</span>
             <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-outline-variant/30 bg-surface-container-high text-[10px] font-bold text-primary">
@@ -266,18 +292,47 @@ function Raids({ userLocation }) {
             })}
           </MapContainer>
 
-          <div className="pointer-events-auto absolute bottom-8 left-8 z-[500] max-w-xs border-l-4 border-primary bg-surface-container-low/80 p-4 backdrop-blur-md">
+          <div className="pointer-events-auto absolute bottom-24 left-4 z-[500] max-w-[calc(100%-2rem)] border-l-4 border-primary bg-surface-container-low/80 p-4 backdrop-blur-md sm:bottom-8 sm:left-8 sm:max-w-xs">
             <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-tertiary">Weather alert</div>
             <div className="text-sm font-bold uppercase tracking-tight text-on-surface">Windy condition: Dragon boosted</div>
           </div>
         </div>
       </div>
 
-      <aside className="flex w-96 shrink-0 flex-col border-l border-outline-variant/10 bg-surface-container-low">
-        <div className="border-b border-outline-variant/10 p-6">
-          <div className="flex items-center justify-between">
+      {!isMdUp && raidListOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-[380] bg-black/55 md:hidden"
+          aria-label="Close raid list"
+          onClick={() => setRaidListOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`flex flex-col border-outline-variant/10 bg-surface-container-low ${
+          isMdUp
+            ? 'w-96 shrink-0 border-l'
+            : `fixed inset-x-0 bottom-0 z-[400] max-h-[min(75vh,560px)] rounded-t-xl border shadow-[0_-12px_48px_rgba(0,0,0,0.55)] transition-transform duration-300 ease-out ${
+                raidListOpen ? 'translate-y-0' : 'translate-y-[110%] pointer-events-none'
+              }`
+        }`}
+      >
+        <div className="border-b border-outline-variant/10 p-4 sm:p-6">
+          <div className="flex items-center justify-between gap-2">
             <h2 className="font-headline text-sm font-black uppercase tracking-tighter text-on-surface">Nearby raids</h2>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-outline">{filteredRaids.length} total</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline">{filteredRaids.length} total</span>
+              {!isMdUp && (
+                <button
+                  type="button"
+                  className="rounded-sm p-1.5 text-slate-400 hover:bg-surface-container-high hover:text-on-surface md:hidden"
+                  onClick={() => setRaidListOpen(false)}
+                  aria-label="Close raid list"
+                >
+                  <span className="material-symbols-outlined">expand_more</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <div className="hq-scrollbar flex-1 space-y-3 overflow-y-auto p-4">

@@ -4,6 +4,7 @@ const cors = require('cors');
 const pokemonRoutes = require('./routes/pokemonRoutes');
 const raidRoutes = require('./routes/raidRoutes');
 const routeRoutes = require('./routes/routeRoutes');
+const geocodeRoutes = require('./routes/geocodeRoutes');
 const db = require('./config/db');
 
 // Initialize the Express app
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/api/pokemon-spawns', pokemonRoutes);
 app.use('/api/raids', raidRoutes);
 app.use('/api/routes', routeRoutes);
+app.use('/api/geocode', geocodeRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 8080;

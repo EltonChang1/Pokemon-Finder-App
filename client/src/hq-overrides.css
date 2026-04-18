@@ -11,6 +11,8 @@
 .hq-map-wrap .leaflet-container {
   background: #0b0e14;
   font-family: Manrope, system-ui, sans-serif;
+  overscroll-behavior: contain;
+  touch-action: manipulation;
 }
 
 .hq-map-wrap .leaflet-tile {

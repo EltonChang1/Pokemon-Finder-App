@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { pokemonAPI } from '../api';
 import { geocodeAddress, parseLatLngPair } from '../utils/geocode';
 import { haversineKm } from '../utils/geo';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const RARITY_BORDER = {
   Common: '#64748b',
@@ -22,15 +23,20 @@ function totalIvPercent(p) {
 }
 
 function createPokemonIcon(pokedexId, rarity, isPerfect) {
-  const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokedexId}.png`;
+  const id = Number(pokedexId);
+  const hasSprite = Number.isFinite(id) && id > 0;
+  const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
   const border = RARITY_BORDER[rarity] || RARITY_BORDER.Common;
   const glow = isPerfect ? 'box-shadow:0 0 24px rgba(250,189,0,0.55);' : 'box-shadow:0 4px 14px rgba(0,0,0,0.45);';
+  const inner = hasSprite
+    ? `<img src="${spriteUrl}" alt="" style="width:32px;height:32px;display:block;image-rendering:pixelated;" />`
+    : `<span style="display:flex;width:32px;height:32px;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#a2c9ff;">?</span>`;
   return L.divIcon({
     html: `
       <div style="position:relative;width:44px;height:44px;">
         ${isPerfect ? '<div style="position:absolute;inset:-6px;background:rgba(250,189,0,0.25);border-radius:50%;filter:blur(8px);"></div>' : ''}
         <div style="position:relative;background:#191c22;border:2px solid ${border};border-radius:6px;padding:3px;${glow}">
-          <img src="${spriteUrl}" alt="" style="width:32px;height:32px;display:block;image-rendering:pixelated;" />
+          ${inner}
         </div>
         ${
           isPerfect
@@ -61,12 +67,11 @@ function RecenterMap({ center, zoom = 13 }) {
   return null;
 }
 
-function MapFloatingControls({ setUserLocation }) {
+function MapFloatingControls({ setUserLocation, anchorClass = 'bottom-24 left-4 md:bottom-8 md:left-8' }) {
   const map = useMap();
   return (
     <div
-      className="pointer-events-auto flex flex-col gap-2"
-      style={{ position: 'absolute', bottom: 32, left: 32, zIndex: 1000 }}
+      className={`pointer-events-auto absolute z-[1000] flex flex-col gap-2 ${anchorClass}`}
     >
       <button
         type="button"
@@ -114,7 +119,7 @@ const RARITY_LABEL = {
   Legendary: 'Legendary',
 };
 
-function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
+function Map({ userLocation, setUserLocation, onOpenLocationModal, spawnDataVersion = 0 }) {
   const [pokemonSpawns, setPokemonSpawns] = useState([]);
   const [filteredPokemon, setFilteredPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -142,11 +147,32 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
 
   const [scanQuery, setScanQuery] = useState('');
   const [scanBusy, setScanBusy] = useState(false);
+  const [scanError, setScanError] = useState(null);
   const [priorityDismissed, setPriorityDismissed] = useState(false);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const isMdUp = useMediaQuery('(min-width: 768px)');
+  const scanGeocodeAbort = useRef(null);
+
+  useEffect(() => {
+    setFilterSheetOpen(isMdUp);
+  }, [isMdUp]);
 
   useEffect(() => {
     setPriorityDismissed(false);
   }, [userLocation, searchRadius, pokemonSpawns]);
+
+  useEffect(() => {
+    setScanError(null);
+  }, [scanQuery]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (!isMdUp && filterSheetOpen) setFilterSheetOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMdUp, filterSheetOpen]);
 
   useEffect(() => {
     const fetchNearbyPokemon = async () => {
@@ -164,7 +190,7 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
       }
     };
     fetchNearbyPokemon();
-  }, [userLocation, searchRadius]);
+  }, [userLocation, searchRadius, spawnDataVersion]);
 
   useEffect(() => {
     const filtered = pokemonSpawns.filter((pokemon) => {
@@ -229,6 +255,7 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
   };
 
   const resetFilters = () => {
+    if (!isMdUp) setFilterSheetOpen(false);
     setNameSearch('');
     setSelectedRarities({
       Common: true,
@@ -258,19 +285,32 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
       if (coords) {
         setUserLocation(coords);
         setScanQuery('');
+        setScanError(null);
         return;
       }
+      scanGeocodeAbort.current?.abort();
+      const ac = new AbortController();
+      scanGeocodeAbort.current = ac;
       try {
         setScanBusy(true);
-        const loc = await geocodeAddress(q);
+        setScanError(null);
+        const loc = await geocodeAddress(q, ac.signal);
         if (loc) {
           setUserLocation(loc);
           setScanQuery('');
+          setScanError(null);
+        } else {
+          setScanError('No location found for that search. Try a fuller address or use Tune for advanced search.');
         }
       } catch (err) {
-        console.error(err);
+        if (err.name === 'AbortError') return;
+        if (err.message === 'RATE_LIMIT') {
+          setScanError('Too many searches. Wait a second and try again.');
+        } else {
+          setScanError('Location search failed. Check your connection or use Tune for coordinates.');
+        }
       } finally {
-        setScanBusy(false);
+        if (!ac.signal.aborted) setScanBusy(false);
       }
     },
     [scanQuery, setUserLocation]
@@ -283,10 +323,12 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-outline-variant/10 bg-[#10131a]/90 px-6 backdrop-blur-xl">
-        <div className="flex flex-1 items-center gap-6">
-          <span className="text-xl font-black uppercase tracking-tighter text-slate-100">PokeFind</span>
-          <form className="relative max-w-md flex-1" onSubmit={handleScanSubmit}>
+      <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-outline-variant/10 bg-[#10131a]/90 px-3 backdrop-blur-xl sm:px-6">
+        <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-6">
+          <span className="hidden shrink-0 text-xl font-black uppercase tracking-tighter text-slate-100 sm:inline">
+            PokeFind
+          </span>
+          <form className="relative min-w-0 max-w-md flex-1" onSubmit={handleScanSubmit}>
             <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
               search
             </span>
@@ -299,7 +341,18 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
             />
           </form>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+          {!isMdUp && (
+            <button
+              type="button"
+              className="p-2 text-primary transition-colors hover:text-primary/80 md:hidden"
+              onClick={() => setFilterSheetOpen(true)}
+              title="Spawn filters"
+              aria-expanded={filterSheetOpen}
+            >
+              <span className="material-symbols-outlined">filter_list</span>
+            </button>
+          )}
           <button
             type="button"
             className="p-2 text-slate-400 transition-colors hover:text-primary"
@@ -315,6 +368,15 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
           </div>
         </div>
       </header>
+
+      {scanError && (
+        <div
+          className="shrink-0 border-b border-error/25 bg-error-container/15 px-4 py-2 text-center text-xs text-error"
+          role="alert"
+        >
+          {scanError}
+        </div>
+      )}
 
       <div className="relative min-h-0 flex-1">
         <div className="pointer-events-none absolute inset-0 z-10 map-mesh opacity-30" />
@@ -370,7 +432,8 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
                           {rarityLine(pokemon.rarity)}
                         </p>
                         <h3 className="text-lg font-bold tracking-tight">
-                          #{pokemon.pokedexId} {pokemon.name}
+                          {pokemon.pokedexId != null ? `#${pokemon.pokedexId} ` : ''}
+                          {pokemon.name}
                         </h3>
                       </div>
                       <div className="rounded-sm bg-surface-container-highest px-2 py-1 text-[10px] font-bold text-primary">
@@ -408,10 +471,39 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
           })}
         </MapContainer>
 
-        <aside className="absolute bottom-0 right-0 top-0 z-30 flex w-80 flex-col border-l border-outline-variant/10 bg-surface-container-low/95 backdrop-blur-md">
+        {!isMdUp && filterSheetOpen && (
+          <button
+            type="button"
+            className="fixed inset-0 z-[380] bg-black/55 md:hidden"
+            aria-label="Close filters"
+            onClick={() => setFilterSheetOpen(false)}
+          />
+        )}
+
+        <aside
+          className={`flex flex-col border-outline-variant/10 bg-surface-container-low/95 backdrop-blur-md ${
+            isMdUp
+              ? 'absolute bottom-0 right-0 top-0 z-[420] w-80 border-l'
+              : `fixed inset-x-0 bottom-0 z-[400] max-h-[min(78vh,640px)] rounded-t-xl border shadow-[0_-12px_48px_rgba(0,0,0,0.55)] transition-transform duration-300 ease-out ${
+                  filterSheetOpen ? 'translate-y-0' : 'translate-y-[110%] pointer-events-none'
+                }`
+          }`}
+        >
           <div className="flex items-center justify-between border-b border-outline-variant/10 p-5">
             <h2 className="font-headline text-xs font-bold uppercase tracking-widest text-on-surface">Spawn Filters</h2>
-            <span className="material-symbols-outlined text-slate-500">tune</span>
+            <div className="flex items-center gap-1">
+              {!isMdUp && (
+                <button
+                  type="button"
+                  className="rounded-sm p-1.5 text-slate-400 hover:bg-surface-container-high hover:text-on-surface md:hidden"
+                  onClick={() => setFilterSheetOpen(false)}
+                  aria-label="Close filters"
+                >
+                  <span className="material-symbols-outlined">expand_more</span>
+                </button>
+              )}
+              <span className="material-symbols-outlined text-slate-500">tune</span>
+            </div>
           </div>
 
           <div className="hq-scrollbar flex-1 space-y-8 overflow-y-auto p-6">
@@ -584,7 +676,7 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal }) {
         </aside>
 
         {prioritySpawn && !priorityDismissed && (
-          <div className="absolute right-[340px] top-20 z-40 flex max-w-sm items-center gap-4 border-l-4 border-tertiary bg-surface-container-highest/90 p-4 shadow-2xl backdrop-blur-xl">
+          <div className="absolute left-4 right-4 top-24 z-[430] flex items-center gap-4 border-l-4 border-tertiary bg-surface-container-highest/90 p-4 shadow-2xl backdrop-blur-xl sm:left-auto sm:right-[21rem] sm:top-20 sm:max-w-sm">
             <div className="rounded-sm bg-tertiary/20 p-2">
               <span className="material-symbols-outlined text-tertiary">warning</span>
             </div>

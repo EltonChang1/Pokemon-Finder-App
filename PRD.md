@@ -1,6 +1,6 @@
 # Product Requirements Document: PokeFind (Pokemon-Finder-App)
 
-**Document version:** 1.1  
+**Document version:** 1.2  
 **Last updated:** April 17, 2026  
 **Product name:** PokeFind  
 **Repository:** [Pokemon-Finder-App](https://github.com/EltonChang1/Pokemon-Finder-App)
@@ -65,7 +65,7 @@ Without a tool like PokeFind, this information is fragmented, hard to scan at a 
 
 ### 5.1 Experience surface (PokeFind HQ)
 
-The web client uses a **persistent tactical shell**: left rail navigation for **Map**, **Raids**, and **Routes**; **Manrope** typography; dark surfaces with **primary** (blue) and **tertiary** (amber) accents. The **Map** view combines a dark basemap, floating zoom and **locate** controls, a top **scan** field (coordinates or free-text address via geocoding), an optional **advanced location** modal, a **spawn filter** column (rarity, aggregate IV band, per-stat IV and accuracy in an advanced block, optional species pins, radius), and a dismissible **priority** toast when a near-perfect IV spawn appears within **500 m**. **Raids** pairs the map with a **nearby raid list** (countdowns, distance, quick tier/mega filters). **Routes** provides an **intelligence grid** of saved routes, GPX import, create flow, optional map preview, and footer status cues. **Report sighting** is a visible CTA; until a crowdsourced API exists, the UI explains that reporting is not yet wired.
+The web client uses a **persistent tactical shell**: left rail navigation for **Map**, **Raids**, and **Routes**; **Manrope** typography; dark surfaces with **primary** (blue) and **tertiary** (amber) accents. The **Map** view combines a dark basemap, floating zoom and **locate** controls, a top **scan** field (coordinates or free-text address via geocoding), an optional **advanced location** modal, a **spawn filter** column (rarity, aggregate IV band, per-stat IV and accuracy in an advanced block, optional species pins, radius), and a dismissible **priority** toast when a near-perfect IV spawn appears within **500 m**. **Raids** pairs the map with a **nearby raid list** (countdowns, distance, quick tier/mega filters). **Routes** provides an **intelligence grid** of saved routes, GPX import, create flow, optional map preview, and footer status cues. **Report sighting** submits to **`POST /api/pokemon-spawns`** with species, coordinates, rarity, and despawn time. **Polish:** below **768 px** width, spawn filters and the raid list become **bottom sheets** with backdrop dismiss; the **left navigation** becomes a **drawer** (hamburger row + dimmed backdrop) so the main map uses full width; Nominatim is accessed through a **`GET /api/geocode` server proxy** (identifying `User-Agent`, ~1 req/s per IP throttle, forwards primary **`Accept-Language`**) with **debounced** suggestion fetches in the location modal and **abortable** map scan requests; if the proxy is down, the client may fall back to direct Nominatim only when not rate-limited. **Escape** closes modals, then the mobile nav drawer, then map/raid sheets; the map scan bar shows **inline errors** for failed or empty geocodes; **document titles** follow the active route; map panning uses **`overscroll-behavior: contain`** to reduce accidental browser gestures; markers tolerate **missing Pokédex IDs** with a neutral glyph.
 
 ---
 
