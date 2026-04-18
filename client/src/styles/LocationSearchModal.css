@@ -1,10 +1,7 @@
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,9 +9,10 @@
 }
 
 .modal-content {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background: #191c22;
+  border: 1px solid rgba(67, 70, 82, 0.5);
+  border-radius: 4px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
   width: 90%;
   max-width: 500px;
   max-height: 80vh;
@@ -38,48 +36,51 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 1px solid rgba(67, 70, 82, 0.4);
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #333;
-  font-size: 1.5rem;
+  color: #e1e2eb;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
-  color: #999;
+  color: #94a3b8;
   transition: color 0.2s;
 }
 
 .modal-close:hover {
-  color: #333;
+  color: #e1e2eb;
 }
 
 .modal-error {
-  background: #fee;
-  color: #c33;
+  background: rgba(147, 0, 10, 0.25);
+  color: #ffb4ab;
   padding: 12px 20px;
   margin: 15px 20px 0 20px;
-  border-radius: 6px;
-  font-size: 14px;
-  border-left: 4px solid #c33;
+  border-radius: 4px;
+  font-size: 13px;
+  border-left: 4px solid #ffb4ab;
 }
 
 .modal-section {
   padding: 20px;
-  border-bottom: 1px solid #ecf0f1;
+  border-bottom: 1px solid rgba(67, 70, 82, 0.35);
 }
 
 .modal-section h3 {
   margin: 0 0 12px 0;
-  color: #333;
-  font-size: 1rem;
-  font-weight: 600;
+  color: #a2c9ff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .address-search-row {
@@ -90,20 +91,21 @@
 .address-search-row input {
   flex: 1;
   padding: 10px 12px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid rgba(67, 70, 82, 0.6);
+  border-radius: 4px;
   font-size: 14px;
+  background: #0b0e14;
+  color: #e1e2eb;
   transition: border-color 0.2s;
 }
 
 .address-search-row input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #a2c9ff;
 }
 
 .address-search-row input:disabled {
-  background: #f5f5f5;
-  color: #999;
+  opacity: 0.5;
 }
 
 .coords-search-row {
@@ -120,51 +122,54 @@
 }
 
 .coord-input label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: #666;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .coord-input input {
   padding: 10px 12px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid rgba(67, 70, 82, 0.6);
+  border-radius: 4px;
   font-size: 14px;
-  transition: border-color 0.2s;
+  background: #0b0e14;
+  color: #e1e2eb;
 }
 
 .coord-input input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #a2c9ff;
 }
 
 .coords-tip {
   margin: 8px 0 0 0;
   font-size: 12px;
-  color: #999;
-  font-style: italic;
+  color: #64748b;
 }
 
 .modal-btn {
   padding: 10px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(90deg, #a2c9ff 0%, #004d89 100%);
+  color: #00315b;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: opacity 0.2s ease;
 }
 
 .modal-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  opacity: 0.92;
 }
 
 .modal-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -177,24 +182,23 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  border-top: 1px solid #ecf0f1;
+  border-top: 1px solid rgba(67, 70, 82, 0.35);
 }
 
 .modal-btn-secondary {
   padding: 10px 20px;
-  background: #ecf0f1;
-  color: #333;
+  background: #32353c;
+  color: #e1e2eb;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .modal-btn-secondary:hover {
-  background: #ddd;
-  transform: translateY(-1px);
+  background: #434652;
 }
 
 @media (max-width: 600px) {

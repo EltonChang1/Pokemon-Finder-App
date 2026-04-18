@@ -1,67 +1,46 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Map from './components/Map';
 import Routes from './components/Routes';
 import Raids from './components/Raids';
 import LocationSearchModal from './components/LocationSearchModal';
-import './App.css';
+import HQSidebar from './components/hq/HQSidebar';
+import ReportSightingModal from './components/hq/ReportSightingModal';
+import './index.css';
+import './hq-overrides.css';
 
 function App() {
-  const [userLocation, setUserLocation] = useState([40.4406, -79.9959]); // Pittsburgh default
+  const [userLocation, setUserLocation] = useState([40.4406, -79.9959]);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
-  const handleLocationChange = (newLocation) => {
-    setUserLocation(newLocation);
-  };
   return (
     <Router>
-      <div className="app">
-        <nav className="navbar">
-          <div className="navbar-container">
-            <Link to="/" className="navbar-logo">
-              <span className="logo-icon">🔴</span> PokeFind
-            </Link>
-            <ul className="nav-menu">
-              <li className="nav-item">
-                <Link to="/" className="nav-links">
-                  🗺️ Map
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/raids" className="nav-links">
-                  ⚔️ Raids
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/routes" className="nav-links">
-                  🧭 Routes
-                </Link>
-              </li>
-              <li className="nav-item location-search-item">
-                <button 
-                  className="location-search-btn"
-                  onClick={() => setIsLocationModalOpen(true)}
-                  title={`Current: ${userLocation[0].toFixed(4)}, ${userLocation[1].toFixed(4)}`}
-                >
-                  📍 Location: {userLocation[0].toFixed(2)}, {userLocation[1].toFixed(2)}
-                </button>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
-        <main className="main-content">
-          <Route exact path="/" render={() => <Map userLocation={userLocation} />} />
-          <Route path="/routes" component={Routes} />
+      <div className="flex h-screen overflow-hidden bg-background text-on-background">
+        <HQSidebar onReport={() => setReportOpen(true)} />
+        <div className="ml-60 flex min-h-0 min-w-0 flex-1 flex-col">
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <Map
+                userLocation={userLocation}
+                setUserLocation={setUserLocation}
+                onOpenLocationModal={() => setIsLocationModalOpen(true)}
+              />
+            )}
+          />
           <Route path="/raids" render={() => <Raids userLocation={userLocation} />} />
-        </main>
+          <Route path="/routes" component={Routes} />
+        </div>
 
-        <LocationSearchModal 
+        <LocationSearchModal
           isOpen={isLocationModalOpen}
           onClose={() => setIsLocationModalOpen(false)}
-          onLocationChange={handleLocationChange}
+          onLocationChange={setUserLocation}
           currentLocation={userLocation}
         />
+        <ReportSightingModal isOpen={reportOpen} onClose={() => setReportOpen(false)} />
       </div>
     </Router>
   );
