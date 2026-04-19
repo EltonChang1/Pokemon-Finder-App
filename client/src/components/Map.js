@@ -179,11 +179,22 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal, spawnDataVers
       try {
         setLoading(true);
         const response = await pokemonAPI.getNearby(userLocation[0], userLocation[1], searchRadius);
-        setPokemonSpawns(response.data);
+        const raw = response.data;
+        const list = Array.isArray(raw) ? raw : [];
+        setPokemonSpawns(list);
         setError(null);
       } catch (err) {
         console.error('Error fetching Pokémon data:', err);
-        setError('Failed to load Pokémon data. Make sure the backend is running.');
+        const status = err.response?.status;
+        const serverMsg = err.response?.data?.message;
+        let msg = 'Failed to load Pokémon data.';
+        if (!err.response) {
+          msg +=
+            ' No response from the server — start the API on port 8080 (e.g. `npm start` in `server/`) and use `npm start` for the client so `/api` is proxied, or set `REACT_APP_API_URL` to your API origin.';
+        } else {
+          msg += ` ${serverMsg || `(HTTP ${status})`}`;
+        }
+        setError(msg);
         setPokemonSpawns([]);
       } finally {
         setLoading(false);
@@ -195,7 +206,14 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal, spawnDataVers
   useEffect(() => {
     const filtered = pokemonSpawns.filter((pokemon) => {
       if (nameSearch && !pokemon.name.toLowerCase().includes(nameSearch.toLowerCase())) return false;
-      if (!selectedRarities[pokemon.rarity]) return false;
+      // Only apply rarity toggles when the spawn has a known key; missing/unknown rarity must not hide rows.
+      if (
+        pokemon.rarity != null &&
+        Object.prototype.hasOwnProperty.call(selectedRarities, pokemon.rarity) &&
+        !selectedRarities[pokemon.rarity]
+      ) {
+        return false;
+      }
       if ((pokemon.iv_attack || 0) < ivAttackMin || (pokemon.iv_attack || 0) > ivAttackMax) return false;
       if ((pokemon.iv_defense || 0) < ivDefenseMin || (pokemon.iv_defense || 0) > ivDefenseMax) return false;
       if ((pokemon.iv_stamina || 0) < ivStaminaMin || (pokemon.iv_stamina || 0) > ivStaminaMax) return false;
@@ -378,12 +396,24 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal, spawnDataVers
         </div>
       )}
 
+      {!loading && !error && pokemonSpawns.length === 0 && (
+        <div
+          className="shrink-0 border-b border-primary/20 bg-primary-container/10 px-4 py-2 text-center text-xs text-on-surface"
+          role="status"
+        >
+          No spawns in this area. If you just started the project, run MongoDB, start the API, then from{' '}
+          <code className="rounded bg-surface-container-high px-1 py-0.5 font-mono text-[10px] text-primary">server/</code>{' '}
+          run <code className="rounded bg-surface-container-high px-1 py-0.5 font-mono text-[10px] text-primary">node seedPokemon.js</code>{' '}
+          (or report a sighting from the sidebar). Move the map or widen the scan radius if your data is elsewhere.
+        </div>
+      )}
+
       <div className="relative min-h-0 flex-1">
-        <div className="pointer-events-none absolute inset-0 z-10 map-mesh opacity-30" />
+        <div className="pointer-events-none absolute inset-0 z-0 map-mesh opacity-30" />
         <MapContainer
           center={userLocation}
           zoom={13}
-          className="hq-map-wrap h-full w-full"
+          className="relative z-[1] hq-map-wrap h-full w-full"
           zoomControl={false}
         >
           <RecenterMap center={userLocation} zoom={13} />
@@ -418,10 +448,14 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal, spawnDataVers
           {filteredPokemon.map((pokemon) => {
             const pct = totalIvPercent(pokemon);
             const perfect = pct >= 99.9;
+            const markerKey =
+              pokemon._id != null
+                ? String(pokemon._id)
+                : `${pokemon.latitude},${pokemon.longitude},${pokemon.name ?? ''}`;
             return (
               <Marker
-                key={pokemon._id}
-                position={[pokemon.latitude, pokemon.longitude]}
+                key={markerKey}
+                position={[Number(pokemon.latitude), Number(pokemon.longitude)]}
                 icon={createPokemonIcon(pokemon.pokedexId, pokemon.rarity, perfect)}
               >
                 <Popup>
