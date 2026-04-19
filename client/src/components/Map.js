@@ -226,7 +226,7 @@ function Map({ userLocation, setUserLocation, onOpenLocationModal, spawnDataVers
   ]);
 
   const uniqueSpecies = useMemo(() => {
-    const m = new Map();
+    const m = new window.Map();
     pokemonSpawns.forEach((p) => {
       if (p.pokedexId != null && !m.has(p.pokedexId)) m.set(p.pokedexId, p);
     });
